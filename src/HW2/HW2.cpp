@@ -117,7 +117,11 @@ void postProcess(const std::string& output_file, uchar4* data_ptr) {
   cv::Mat output(numRows(), numCols(), CV_8UC4, (void*)data_ptr);
 
   cv::Mat imageOutputBGR;
-  cv::cvtColor(output, imageOutputBGR, CV_RGBA2BGR);
+#if (CV_VERSION_MAJOR >= 4)
+    cv::cvtColor(output, imageOutputBGR, cv::COLOR_BGR2RGB);
+ #else
+    cv::cvtColor(output, imageOutputBGR, CV_BGR2RGB);
+ #endif
   //output the image
   cv::imwrite(output_file.c_str(), imageOutputBGR);
 }
