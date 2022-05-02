@@ -33,13 +33,23 @@ void preProcess(uchar4 **h_inputImageRGBA, uchar4 **h_outputImageRGBA,
   //make sure the context initializes ok
   checkCudaErrors(cudaFree(0));
 
-  cv::Mat image = cv::imread(filename.c_str(), CV_LOAD_IMAGE_COLOR);
+#if (CV_VERSION_MAJOR >= 4)
+    cv::Mat image = cv::imread(filename.c_str(), cv::IMREAD_COLOR);
+ #else
+   cv::Mat image = cv::imread(filename.c_str(), CV_LOAD_IMAGE_COLOR);
+ #endif
+	
+  
   if (image.empty()) {
     std::cerr << "Couldn't open file: " << filename << std::endl;
     exit(1);
   }
 
-  cv::cvtColor(image, imageInputRGBA, CV_BGR2RGBA);
+#if (CV_VERSION_MAJOR >= 4)
+    cv::cvtColor(image, imageInputRGBA, cv::COLOR_BGR2RGB);
+ #else
+    cv::cvtColor(image, imageInputRGBA, CV_BGR2RGB);
+ #endif
 
   //allocate memory for the output
   imageOutputRGBA.create(image.rows, image.cols, CV_8UC4);
