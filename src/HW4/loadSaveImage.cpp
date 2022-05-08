@@ -4,6 +4,11 @@
 #include <vector>
 #include "cuda_runtime.h"
 
+#if (CV_VERSION_MAJOR >= 4)
+#include "opencv2/imgcodecs/legacy/constants_c.h"
+#include "opencv2/imgproc/types_c.h"
+#endif
+
 //The caller becomes responsible for the returned pointer. This
 //is done in the interest of keeping this code as simple as possible.
 //In production code this is a bad idea - we should use RAII
