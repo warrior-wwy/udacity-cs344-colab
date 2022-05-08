@@ -27,13 +27,21 @@ void preProcess(uchar4 **inputImage, unsigned char **greyImage,
   checkCudaErrors(cudaFree(0));
 
   cv::Mat image;
-  image = cv::imread(filename.c_str(), CV_LOAD_IMAGE_COLOR);
+#if (CV_VERSION_MAJOR >= 4)
+    cv::Mat image = cv::imread(filename.c_str(), cv::IMREAD_COLOR);
+ #else
+   cv::Mat image = cv::imread(filename.c_str(), CV_LOAD_IMAGE_COLOR);
+ #endif
   if (image.empty()) {
     std::cerr << "Couldn't open file: " << filename << std::endl;
     exit(1);
   }
 
-  cv::cvtColor(image, imageRGBA, CV_BGR2RGBA);
+#if (CV_VERSION_MAJOR >= 4)
+    cv::cvtColor(image, imageInputRGBA, cv::COLOR_BGR2RGB);
+ #else
+    cv::cvtColor(image, imageInputRGBA, CV_BGR2RGB);
+ #endif
 
   //allocate memory for the output
   imageGrey.create(image.rows, image.cols, CV_8UC1);
@@ -77,8 +85,11 @@ void cleanup()
 
 void generateReferenceImage(std::string input_filename, std::string output_filename)
 {
-  cv::Mat reference = cv::imread(input_filename, CV_LOAD_IMAGE_GRAYSCALE);
+  #if (CV_VERSION_MAJOR >= 4)
+    cv::Mat reference = cv::imread(input_filename.c_str().c_str(), cv::ImreadModes::IMREAD_GRAYSCALE);
+ #else
+   cv::Mat reference = cv::imread(input_filename.c_str(), CV_LOAD_IMAGE_COLOR);
+ #endif
 
   cv::imwrite(output_filename, reference);
-
 }

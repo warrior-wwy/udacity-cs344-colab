@@ -13,7 +13,11 @@ void loadImageHDR(const std::string &filename,
                   float **imagePtr,
                   size_t *numRows, size_t *numCols)
 {
-  cv::Mat image = cv::imread(filename.c_str(), CV_LOAD_IMAGE_COLOR | CV_LOAD_IMAGE_ANYDEPTH);
+   #if (CV_VERSION_MAJOR >= 4)
+    cv::Mat image = cv::imread(filename.c_str(), cv::IMREAD_COLOR | cv::IMREAD_ANYDEPTH);
+ #else
+   cv::Mat image = cv::imread(filename.c_str(), CV_LOAD_IMAGE_COLOR | CV_LOAD_IMAGE_ANYDEPTH);
+ #endif
   if (image.empty()) {
     std::cerr << "Couldn't open file: " << filename << std::endl;
     exit(1);
@@ -73,7 +77,11 @@ void loadImageRGBA(const std::string &filename,
                    uchar4 **imagePtr,
                    size_t *numRows, size_t *numCols)
 {
-  cv::Mat image = cv::imread(filename.c_str(), CV_LOAD_IMAGE_COLOR);
+#if (CV_VERSION_MAJOR >= 4)
+    cv::Mat image = cv::imread(filename.c_str(), cv::IMREAD_COLOR);
+ #else
+   cv::Mat image = cv::imread(filename.c_str(), CV_LOAD_IMAGE_COLOR);
+ #endif  
   if (image.empty()) {
     std::cerr << "Couldn't open file: " << filename << std::endl;
     exit(1);
@@ -90,8 +98,11 @@ void loadImageRGBA(const std::string &filename,
   }
 
   cv::Mat imageRGBA;
-  cv::cvtColor(image, imageRGBA, CV_BGR2RGBA);
-
+#if (CV_VERSION_MAJOR >= 4)
+    cv::cvtColor(image, imageRGBA, cv::COLOR_BGR2RGBA);
+ #else
+    cv::cvtColor(image, imageRGBA, CV_BGR2RGBA);
+ #endif
   *imagePtr = new uchar4[image.rows * image.cols];
 
   unsigned char *cvPtr = imageRGBA.ptr<unsigned char>(0);
